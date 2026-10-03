@@ -35,10 +35,9 @@ class HtmlRenderer
             if ($o->authors || $o->dates) {
                 $avatar = '';
                 if ($o->avatars && $o->authors) {
-                    $src = $post->avatarUrl ? $this->images->dataFor($post->avatarUrl, false, true) : null;
-                    $avatar = $src
-                        ? '<td class="folio-avatar"><img src="' . $e($src) . '" alt=""></td>'
-                        : '<td class="folio-avatar"><span class="folio-initial">' . $e(mb_strtoupper(mb_substr($post->author, 0, 1))) . '</span></td>';
+                    $src = ($post->avatarUrl ? $this->images->dataFor($post->avatarUrl, false, true) : null)
+                        ?? InitialAvatar::dataUri($post->author, $doc->primaryColor);
+                    $avatar = '<td class="folio-avatar">' . ($src ? '<img src="' . $e($src) . '" alt="">' : '') . '</td>';
                 }
 
                 $date = '';
@@ -100,11 +99,12 @@ a { color: {$c}; }
 .folio-custom-header { font-size: 8.5pt; color: #6b7280; margin: 0 0 10pt; }
 .folio-custom-footer { font-size: 8.5pt; color: #6b7280; margin-top: 18pt; padding-top: 8pt; border-top: 0.5pt solid #d1d5db; }
 .folio-post { margin: 0 0 14pt; padding-bottom: 12pt; border-bottom: 0.5pt solid #e5e7eb; }
+/* A byline is never left alone at the foot of a page with its post overleaf. */
+.folio-byline { page-break-after: avoid; page-break-inside: avoid; }
 .folio-byline { width: 100%; border-collapse: collapse; margin: 0 0 6pt; }
 .folio-byline td { vertical-align: middle; padding: 0; }
 .folio-avatar { width: 34pt; }
 .folio-avatar img { width: 26pt; height: 26pt; border-radius: 13pt; }
-.folio-initial { display: inline-block; width: 26pt; height: 26pt; line-height: 26pt; border-radius: 13pt; text-align: center; color: #fff; background: {$c}; font-weight: bold; }
 .folio-author { color: #111827; }
 .folio-date, .folio-edited { font-size: 8.5pt; color: #6b7280; }
 .folio-edited { font-style: italic; }

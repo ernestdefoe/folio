@@ -5,6 +5,7 @@ namespace Ernestdefoe\Folio\Format;
 use Ernestdefoe\Folio\Export\Document;
 use Ernestdefoe\Folio\Export\Html;
 use Ernestdefoe\Folio\Export\ImageEmbedder;
+use Ernestdefoe\Folio\Export\InitialAvatar;
 use Flarum\Foundation\Paths;
 use Flarum\Locale\TranslatorInterface;
 use PhpOffice\PhpWord\IOFactory;
@@ -87,7 +88,10 @@ class DocxFormat implements Format
              */
             $byline = $section->addTextRun(['spaceBefore' => 160, 'spaceAfter' => 80, 'borderTopSize' => 4, 'borderTopColor' => 'E5E7EB']);
 
-            if ($o->avatars && $o->authors && $post->avatarUrl && ($src = $this->images->dataFor($post->avatarUrl, false, true))) {
+            $src = $o->avatars && $o->authors
+                ? (($post->avatarUrl ? $this->images->dataFor($post->avatarUrl, false, true) : null) ?? InitialAvatar::dataUri($post->author, $doc->primaryColor))
+                : null;
+            if ($src) {
                 $byline->addImage((string) base64_decode(substr($src, strpos($src, ',') + 1)), ['width' => 18, 'height' => 18]);
                 $byline->addText(' ');
             }
