@@ -12,7 +12,7 @@ Export a discussion as a **PDF**, a **Word document** or **Markdown**: for archi
 
 The dialog remembers each reader's last choices.
 
-![Page one of an exported PDF: the title, the forum and link, then each post with its author, date and post number, screenshots embedded](screenshots/pdf.png)
+![Page one of an exported PDF: the title, the forum and link, then each post with its author, date and post number, its banner image embedded](screenshots/pdf.png)
 
 ## What goes in the file
 
