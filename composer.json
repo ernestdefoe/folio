@@ -29,6 +29,9 @@
         "league/html-to-markdown": "^5.1",
         "phpoffice/phpword": "^1.4"
     },
+    "suggest": {
+        "mpdf/mpdf": "Lets PDF exports contain Chinese, Japanese, Korean, Arabic, Hebrew and other scripts the default engine can't set."
+    },
     "autoload": {
         "psr-4": {
             "Ernestdefoe\\Folio\\": "src/"

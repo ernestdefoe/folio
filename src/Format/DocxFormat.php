@@ -10,6 +10,7 @@ use Flarum\Foundation\Paths;
 use Flarum\Locale\TranslatorInterface;
 use PhpOffice\PhpWord\IOFactory;
 use PhpOffice\PhpWord\PhpWord;
+use PhpOffice\PhpWord\Settings;
 use PhpOffice\PhpWord\Shared\Html as WordHtml;
 use Psr\Log\LoggerInterface;
 
@@ -39,6 +40,13 @@ class DocxFormat implements Format
         $o = $doc->options;
         $color = ltrim($doc->primaryColor, '#');
         $color = strlen($color) === 3 ? preg_replace('/(.)/', '$1$1', $color) : $color;
+
+        /*
+         * 🚨 PhpWord writes text into the document XML UNESCAPED unless told
+         * otherwise. One "&" in a post — a URL's query string, "Q&A" in a
+         * title — made the whole file invalid XML that Word refuses to open.
+         */
+        Settings::setOutputEscapingEnabled(true);
 
         $word = new PhpWord();
         $word->setDefaultFontName('Calibri');
@@ -170,6 +178,29 @@ class DocxFormat implements Format
                 $img->setAttribute('height', (string) max(1, (int) round($h * $scale)));
             }
             $img->removeAttribute('style');
+        }
+
+        /*
+         * PhpWord only understands some of HTML. Tables came out with no
+         * borders and no header row, and struck-through text lost its strike,
+         * so both are restated in terms it does read.
+         */
+        foreach (Html::all($dom, 'table') as $table) {
+            $table->setAttribute('border', '1');
+            $table->setAttribute('style', 'width: 100%; border-collapse: collapse; border: 1px solid #D1D5DB;');
+        }
+        foreach (Html::all($dom, 'th') as $th) {
+            $th->setAttribute('style', 'background-color: #F3F4F6; font-weight: bold;');
+        }
+        foreach (['del', 's', 'strike'] as $tag) {
+            foreach (Html::all($dom, $tag) as $old) {
+                $span = $dom->createElement('span');
+                $span->setAttribute('style', 'text-decoration: line-through;');
+                while ($old->firstChild) {
+                    $span->appendChild($old->firstChild);
+                }
+                $old->parentNode?->replaceChild($span, $old);
+            }
         }
 
         return Html::innerXml($dom);

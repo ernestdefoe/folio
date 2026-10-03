@@ -104,7 +104,16 @@ export default class ExportModal extends Modal {
             ) : null}
           </div>
 
-          {this.error ? <p className="FolioModal-error">{this.error}</p> : null}
+          {this.error ? (
+            <div className="FolioModal-error">
+              <p>{this.error}</p>
+              {this.suggestWord ? (
+                <Button className="Button Button--link" icon="fas fa-file-word" onclick={() => this.useWord()}>
+                  {t('use_word')}
+                </Button>
+              ) : null}
+            </div>
+          ) : null}
 
           <div className="Form-group">
             <Button className="Button Button--primary Button--block" icon="fas fa-download" loading={this.loading} onclick={() => this.download()}>
@@ -140,6 +149,7 @@ export default class ExportModal extends Modal {
 
     this.loading = true;
     this.error = null;
+    this.suggestWord = false;
     m.redraw();
 
     try {
@@ -147,7 +157,19 @@ export default class ExportModal extends Modal {
       const response = await fetch(url, { credentials: 'same-origin', headers: { 'X-CSRF-Token': app.session.csrfToken } });
 
       if (!response.ok) {
-        this.error = t(response.status === 429 ? 'throttled' : 'failed');
+        // A refusal with a reason (e.g. a script only Word can show) says so;
+        // anything else gets the generic message.
+        let detail = null;
+        if (response.status === 422) {
+          try {
+            detail = (await response.json()).errors?.[0]?.detail || null;
+          } catch (e) {
+            // not JSON: fall through to the generic message
+          }
+        }
+        this.error = detail || t(response.status === 429 ? 'throttled' : 'failed');
+        // A PDF refused for its script: Word can do it, so offer it in one click.
+        this.suggestWord = !!detail && this.format === 'pdf' && this.formats.some((f) => f.key === 'docx');
         return;
       }
 
@@ -169,6 +191,11 @@ export default class ExportModal extends Modal {
       this.loading = false;
       m.redraw();
     }
+  }
+
+  useWord() {
+    this.format = 'docx';
+    this.download();
   }
 
   filename(header) {

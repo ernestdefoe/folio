@@ -15,6 +15,7 @@ ernestdefoe-folio:
       private_note: The file contains only the posts you can see.
       failed: The export could not be created. Please try again.
       throttled: You just exported something. Wait a few seconds and try again.
+      use_word: Export as Word instead
 
   admin:
     permission: Export discussions
@@ -22,6 +23,9 @@ ernestdefoe-folio:
     format_pdf: PDF
     format_docx: Word (DOCX)
     format_markdown: Markdown
+    scripts_heading: Chinese, Japanese, Korean, Arabic, Hebrew and other scripts in PDFs
+    scripts_ok: "Ready: mPDF is installed, and PDFs of discussions in these scripts are set with it automatically."
+    scripts_missing: "Not set up. PDFs of discussions containing these scripts are refused, and the member is pointed to Word, which shows every language. To enable them, run:"
     document_heading: The document
     paper: Paper size
     paper_a4: A4
@@ -49,5 +53,8 @@ ernestdefoe-folio:
     page_of: "Page {page} of {pages}"
     image_unavailable: image
     omitted: "{count, plural, one {# more post was} other {# more posts were}} left out because the discussion is longer than this forum exports."
+    spoiler: "Spoiler:"
     errors:
       unknown_format: That export format is not available.
+      needs_mpdf: "This discussion contains Chinese, Japanese, Korean, Arabic, Hebrew or another script this forum's PDF export can't set correctly. Export it as Word instead: Word shows every language properly."
+

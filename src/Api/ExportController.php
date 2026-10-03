@@ -4,6 +4,7 @@ namespace Ernestdefoe\Folio\Api;
 
 use Ernestdefoe\Folio\Export\DocumentBuilder;
 use Ernestdefoe\Folio\Export\ExportOptions;
+use Ernestdefoe\Folio\Export\UnsupportedScript;
 use Ernestdefoe\Folio\Format\FormatRegistry;
 use Flarum\Discussion\Discussion;
 use Flarum\Foundation\ValidationException;
@@ -54,7 +55,15 @@ class ExportController implements RequestHandlerInterface
         // A long discussion with images is real work for a converter.
         @set_time_limit(180);
 
-        $bytes = $format->render($this->builder->build($discussion, $actor, $options, $request));
+        try {
+            $bytes = $format->render($this->builder->build($discussion, $actor, $options, $request));
+        } catch (UnsupportedScript) {
+            // Refused rather than produced wrong: a PDF of empty boxes looks
+            // like a broken extension, and Word shows every script correctly.
+            throw new ValidationException([
+                'format' => $this->translator->trans('ernestdefoe-folio.lib.errors.needs_mpdf'),
+            ]);
+        }
 
         $body = new Stream('php://temp', 'wb+');
         $body->write($bytes);

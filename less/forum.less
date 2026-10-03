@@ -96,7 +96,24 @@
   text-align: center;
 }
 
+// A refusal is guidance, not an alarm: calm text, with the way forward under it.
 .FolioModal-error {
-  color: var(--control-danger-color, #d83e3e);
-  font-weight: 600;
+  padding: 10px 12px;
+  border-left: 3px solid var(--alert-bg, #fff2ae);
+  border-radius: var(--border-radius);
+  background: var(--control-bg);
+  color: var(--text-color);
+  font-size: 13px;
+  line-height: 1.45;
+
+  p {
+    margin: 0;
+  }
+
+  .Button--link {
+    margin-top: 6px;
+    padding: 0;
+    font-weight: 600;
+    color: var(--primary-color);
+  }
 }

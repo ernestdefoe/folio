@@ -5,6 +5,7 @@ namespace Ernestdefoe\Folio\Format;
 use Ernestdefoe\Folio\Export\Document;
 use Ernestdefoe\Folio\Export\Html;
 use Flarum\Locale\TranslatorInterface;
+use League\HTMLToMarkdown\Converter\TableConverter;
 use League\HTMLToMarkdown\HtmlConverter;
 
 /**
@@ -36,6 +37,10 @@ class MarkdownFormat implements Format
             'hard_break'   => true,
             'remove_nodes' => 'script style',
         ]);
+        // Neither is on by default: tables (Scribe makes them) and strikethrough
+        // were dropped without a trace.
+        $converter->getEnvironment()->addConverter(new TableConverter());
+        $converter->getEnvironment()->addConverter(new StrikethroughConverter());
 
         $out = [];
         if (trim($doc->header) !== '') {
@@ -60,7 +65,7 @@ class MarkdownFormat implements Format
                 $out[] = implode(' · ', $byline) . ' · #' . $post->number;
             }
 
-            $out[] = trim($converter->convert($this->emojiAsText($post->html)));
+            $out[] = $this->unescape(trim($converter->convert($this->emojiAsText($post->html))));
         }
 
         if ($doc->omitted > 0) {
@@ -74,6 +79,26 @@ class MarkdownFormat implements Format
         }
 
         return implode("\n\n", $out) . "\n";
+    }
+
+    /**
+     * 🚨 The converter leaves HTML entities in ordinary text, so a URL's
+     * "&more=" read "&amp;more=" and "Q&A" read "Q&amp;A". They are decoded
+     * everywhere except inside code, where the converter has already decoded
+     * them, and except < and >, which must stay escaped or a reader would take
+     * them for HTML.
+     */
+    private function unescape(string $markdown): string
+    {
+        $parts = preg_split('/(```.*?```|`[^`\n]*`)/s', $markdown, -1, PREG_SPLIT_DELIM_CAPTURE);
+
+        foreach ($parts as $i => $part) {
+            if ($i % 2 === 0) {
+                $parts[$i] = str_replace(['&amp;', '&quot;', '&#039;', '&#39;', '&nbsp;'], ['&', '"', "'", "'", ' '], $part);
+            }
+        }
+
+        return implode('', $parts);
     }
 
     /** An emoji image is the emoji: keep the character, not a link to a PNG of it. */

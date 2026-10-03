@@ -2,6 +2,8 @@
 
 namespace Ernestdefoe\Folio\Export;
 
+use Flarum\Locale\TranslatorInterface;
+
 /**
  * Turns a post's rendered HTML into something safe to hand to a document
  * converter: nothing that runs, nothing that loads by itself, every link
@@ -9,6 +11,10 @@ namespace Ernestdefoe\Folio\Export;
  */
 class HtmlCleaner
 {
+    public function __construct(private TranslatorInterface $translator)
+    {
+    }
+
     /** Removed with everything inside them. */
     private const DROP = ['script', 'style', 'noscript', 'template', 'form', 'input', 'button', 'select', 'textarea', 'svg', 'canvas', 'object', 'embed', 'link', 'meta'];
 
@@ -43,6 +49,17 @@ class HtmlCleaner
                 $p->appendChild($a);
                 $node->parentNode?->replaceChild($p, $node);
             }
+        }
+
+        // Paper cannot hide anything, so a spoiler is at least labelled as one
+        // rather than reading as ordinary text.
+        $xpath = new \DOMXPath($dom);
+        $label = (string) $this->translator->trans('ernestdefoe-folio.lib.spoiler');
+        foreach (iterator_to_array($xpath->query('.//*[contains(concat(" ", normalize-space(@class), " "), " spoiler ")]', $root)) as $spoiler) {
+            /** @var \DOMElement $spoiler */
+            $tag = $dom->createElement('em', $label . ' ');
+            $tag->setAttribute('class', 'folio-spoiler-label');
+            $spoiler->insertBefore($tag, $spoiler->firstChild);
         }
 
         foreach (iterator_to_array($root->getElementsByTagName('*')) as $el) {

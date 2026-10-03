@@ -24,7 +24,8 @@ The dialog remembers each reader's last choices.
   - emoji, so 👍 stays 👍 rather than an empty box.
 
   Images hotlinked from other websites become links unless you switch them on (see **Settings**). Markdown always links to its images, because Markdown can't carry the file itself.
-- **Nothing that can't go on paper** is lost silently: a video or an embed becomes a link to it.
+- **Nothing that can't go on paper** is lost silently: a video or an embed becomes a link to it, and a spoiler is labelled as one.
+- **Long content fits the page.** Long URLs wrap, tall images shrink to one page, wide images and tables fit the width, and code blocks wrap their long lines.
 
 ## Settings
 
@@ -43,7 +44,14 @@ The dialog remembers each reader's last choices.
 - **Exports are rate-limited:** one every few seconds per person, admins excepted. A long PDF is real work for the server.
 - **Images from other websites are fetched carefully** when you allow them. Folio refuses private and internal network addresses, follows no redirects, waits at most a few seconds, and caps each image at 5 MB. A post can't use an export to make your server request something on your own network.
 - **Big screenshots are scaled to the page** and saved as JPEG, which keeps a thread full of screenshots to a few megabytes and a few seconds.
-- **Fonts:** PDFs use DejaVu Sans, which covers Latin, Greek and Cyrillic. Chinese, Japanese and Korean need a font that has those characters, added with custom CSS. Word and Markdown use the reader's own fonts.
+- **Every language in Word and Markdown.** Both use the reader's own fonts, so any script works.
+- **PDFs in Chinese, Japanese, Korean, Arabic, Hebrew, Hindi, Thai and other complex scripts** need one extra package:
+
+  ```sh
+  composer require mpdf/mpdf
+  ```
+
+  With it installed, Folio sets those discussions with mPDF automatically: it uses the right font for each script, joins Arabic letters, and lays out right-to-left text. Everything else keeps the faster default engine. Without it, a PDF of such a discussion is refused with a one-click switch to Word, rather than printing empty boxes. The settings page tells you which state you're in. mPDF is about 90 MB, mostly fonts, which is why it is optional.
 
 ## For extension developers
 

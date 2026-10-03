@@ -53,6 +53,10 @@ return [
         ->fields(fn () => [
             Schema\Arr::make('folioFormats')
                 ->get(fn () => resolve(FormatRegistry::class)->describeEnabled()),
+            // Admin page only: whether PDFs can set CJK, Arabic, Hebrew and the like.
+            Schema\Boolean::make('folioMpdf')
+                ->visible(fn ($model, Context $context) => $context->getActor()->isAdmin())
+                ->get(fn () => \Ernestdefoe\Folio\Export\ComplexScripts::engineAvailable()),
         ]),
 
     (new Extend\Routes('api'))

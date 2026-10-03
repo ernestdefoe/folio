@@ -25,6 +25,23 @@ app.initializers.add('ernestdefoe-folio', () => {
     .registerSetting({ setting: 'ernestdefoe-folio.format_pdf', type: 'boolean', label: t('format_pdf') })
     .registerSetting({ setting: 'ernestdefoe-folio.format_docx', type: 'boolean', label: t('format_docx') })
     .registerSetting({ setting: 'ernestdefoe-folio.format_markdown', type: 'boolean', label: t('format_markdown') })
+    .registerSetting(() => {
+      const ok = app.forum.attribute('folioMpdf');
+      return (
+        <div className="Form-group">
+          <label>{t('scripts_heading')}</label>
+          <p className="helpText">
+            {ok ? t('scripts_ok') : t('scripts_missing')}
+            {ok ? null : (
+              <>
+                {' '}
+                <code>composer require mpdf/mpdf</code>
+              </>
+            )}
+          </p>
+        </div>
+      );
+    })
     .registerSetting(() => <h3 className="FolioAdmin-heading">{t('document_heading')}</h3>)
     .registerSetting({
       setting: 'ernestdefoe-folio.paper',

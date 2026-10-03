@@ -37,7 +37,7 @@ class HtmlRenderer
                 if ($o->avatars && $o->authors) {
                     $src = ($post->avatarUrl ? $this->images->dataFor($post->avatarUrl, false, true) : null)
                         ?? InitialAvatar::dataUri($post->author, $doc->primaryColor);
-                    $avatar = '<td class="folio-avatar">' . ($src ? '<img src="' . $e($src) . '" alt="">' : '') . '</td>';
+                    $avatar = '<td class="folio-avatar">' . ($src ? '<img src="' . $e($src) . '" alt="" style="width: 26pt; height: 26pt;">' : '') . '</td>';
                 }
 
                 $date = '';
@@ -99,7 +99,8 @@ a { color: {$c}; }
 .folio-custom-header { font-size: 8.5pt; color: #6b7280; margin: 0 0 10pt; }
 .folio-custom-footer { font-size: 8.5pt; color: #6b7280; margin-top: 18pt; padding-top: 8pt; border-top: 0.5pt solid #d1d5db; }
 .folio-post { margin: 0 0 14pt; padding-bottom: 12pt; border-bottom: 0.5pt solid #e5e7eb; }
-/* A byline is never left alone at the foot of a page with its post overleaf. */
+/* A byline is never left alone at the foot of a page with its post overleaf.
+   (dompdf only: see PdfFormat::withMpdf.) */
 .folio-byline { page-break-after: avoid; page-break-inside: avoid; }
 .folio-byline { width: 100%; border-collapse: collapse; margin: 0 0 6pt; }
 .folio-byline td { vertical-align: middle; padding: 0; }
@@ -109,7 +110,14 @@ a { color: {$c}; }
 .folio-date, .folio-edited { font-size: 8.5pt; color: #6b7280; }
 .folio-edited { font-style: italic; }
 .folio-number { width: 40pt; text-align: right; font-size: 8.5pt; color: #9ca3af; }
-.folio-body img { max-width: 100%; height: auto; }
+/* 🚨 max-height keeps a tall infographic on one page: without it the image
+   ran off the bottom edge, cut, instead of shrinking to fit. */
+.folio-body img { max-width: 100%; max-height: 225mm; height: auto; }
+/* A bare URL has no spaces to break at and ran off the right-hand edge. */
+.folio-body a { word-break: break-all; }
+.folio-body p, .folio-body li, .folio-body blockquote { word-wrap: break-word; }
+.folio-body .spoiler { background: #f3f4f6; border: 0.5pt dashed #9ca3af; padding: 0 2pt; }
+.folio-spoiler-label { color: #6b7280; font-size: 8.5pt; }
 .folio-body img.emoji { width: 1.15em; height: 1.15em; vertical-align: -0.2em; }
 .folio-body p { margin: 0 0 7pt; }
 .folio-body blockquote { margin: 0 0 8pt; padding: 4pt 10pt; border-left: 3pt solid {$c}; background: #f3f4f6; color: #374151; }
