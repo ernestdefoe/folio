@@ -1,0 +1,51 @@
+{
+    "name": "ernestdefoe/folio",
+    "description": "Export a Flarum discussion as a PDF, a Word document or Markdown — styled in the forum's colours, with only the posts the reader is allowed to see.",
+    "keywords": [
+        "flarum",
+        "flarum-extension",
+        "export",
+        "pdf",
+        "docx",
+        "markdown"
+    ],
+    "type": "flarum-extension",
+    "license": "MIT",
+    "homepage": "https://github.com/ernestdefoe/folio",
+    "support": {
+        "issues": "https://github.com/ernestdefoe/folio/issues",
+        "source": "https://github.com/ernestdefoe/folio"
+    },
+    "authors": [
+        {
+            "name": "Ernest Defoe",
+            "email": "ernestdefoe@gmail.com"
+        }
+    ],
+    "require": {
+        "php": "^8.3",
+        "dompdf/dompdf": "^3.1",
+        "flarum/core": "^2.0",
+        "league/html-to-markdown": "^5.1",
+        "phpoffice/phpword": "^1.4"
+    },
+    "autoload": {
+        "psr-4": {
+            "Ernestdefoe\\Folio\\": "src/"
+        }
+    },
+    "extra": {
+        "flarum-extension": {
+            "title": "Folio",
+            "category": "feature",
+            "icon": {
+                "name": "fas fa-file-export",
+                "backgroundColor": "#0f766e",
+                "color": "#fff"
+            }
+        }
+    },
+    "config": {
+        "sort-packages": true
+    }
+}
