@@ -41,7 +41,7 @@ The dialog remembers each reader's last choices.
 
 ## Good to know
 
-- **Exports are rate-limited:** one every few seconds per person, admins excepted. A long PDF is real work for the server.
+- **Exports are rate-limited:** one every few seconds per person, one running at a time per person and two at a time across the forum, admins excepted. A long PDF is real work for the server, and nobody can tie up every PHP worker with it.
 - **Images from other websites are fetched carefully** when you allow them. Folio refuses private and internal network addresses, follows no redirects, waits at most a few seconds, and caps each image at 5 MB. A post can't use an export to make your server request something on your own network.
 - **Big screenshots are scaled to the page** and saved as JPEG, which keeps a thread full of screenshots to a few megabytes and a few seconds.
 - **Every language in Word and Markdown.** Both use the reader's own fonts, so any script works.

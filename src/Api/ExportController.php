@@ -5,6 +5,7 @@ namespace Ernestdefoe\Folio\Api;
 use Ernestdefoe\Folio\Export\DocumentBuilder;
 use Ernestdefoe\Folio\Export\ExportOptions;
 use Ernestdefoe\Folio\Export\UnsupportedScript;
+use Ernestdefoe\Folio\ExportSlots;
 use Ernestdefoe\Folio\Format\FormatRegistry;
 use Flarum\Discussion\Discussion;
 use Flarum\Foundation\ValidationException;
@@ -14,6 +15,7 @@ use Flarum\Settings\SettingsRepositoryInterface;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Laminas\Diactoros\Response;
+use Laminas\Diactoros\Response\JsonResponse;
 use Laminas\Diactoros\Stream;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -27,6 +29,7 @@ class ExportController implements RequestHandlerInterface
         private DocumentBuilder $builder,
         private SettingsRepositoryInterface $settings,
         private TranslatorInterface $translator,
+        private ExportSlots $slots,
     ) {
     }
 
@@ -52,10 +55,21 @@ class ExportController implements RequestHandlerInterface
             ]);
         }
 
-        // A long discussion with images is real work for a converter.
-        @set_time_limit(180);
+        // Only so many exports run at once: one per person, a few per forum.
+        $release = $this->slots->claim($actor, $request);
+
+        if (is_string($release)) {
+            return new JsonResponse(['errors' => [[
+                'status' => '429',
+                'code'   => 'too_many_requests',
+                'detail' => $this->translator->trans('ernestdefoe-folio.lib.errors.' . ($release === 'self' ? 'export_running' : 'exports_busy')),
+            ]]], 429, ['Retry-After' => '10']);
+        }
 
         try {
+            // A long discussion with images is real work for a converter.
+            @set_time_limit(180);
+
             $bytes = $format->render($this->builder->build($discussion, $actor, $options, $request));
         } catch (UnsupportedScript) {
             // Refused rather than produced wrong: a PDF of empty boxes looks
@@ -63,6 +77,8 @@ class ExportController implements RequestHandlerInterface
             throw new ValidationException([
                 'format' => $this->translator->trans('ernestdefoe-folio.lib.errors.needs_mpdf'),
             ]);
+        } finally {
+            $release();
         }
 
         $body = new Stream('php://temp', 'wb+');

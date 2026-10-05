@@ -157,10 +157,11 @@ export default class ExportModal extends Modal {
       const response = await fetch(url, { credentials: 'same-origin', headers: { 'X-CSRF-Token': app.session.csrfToken } });
 
       if (!response.ok) {
-        // A refusal with a reason (e.g. a script only Word can show) says so;
+        // A refusal with a reason (a script only Word can show, an export
+        // already running) says so;
         // anything else gets the generic message.
         let detail = null;
-        if (response.status === 422) {
+        if (response.status === 422 || response.status === 429) {
           try {
             detail = (await response.json()).errors?.[0]?.detail || null;
           } catch (e) {
@@ -169,7 +170,7 @@ export default class ExportModal extends Modal {
         }
         this.error = detail || t(response.status === 429 ? 'throttled' : 'failed');
         // A PDF refused for its script: Word can do it, so offer it in one click.
-        this.suggestWord = !!detail && this.format === 'pdf' && this.formats.some((f) => f.key === 'docx');
+        this.suggestWord = !!detail && response.status === 422 && this.format === 'pdf' && this.formats.some((f) => f.key === 'docx');
         return;
       }
 
