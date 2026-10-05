@@ -222,6 +222,12 @@ class ImageEmbedder
             $path = substr($path, strlen($basePath));
         }
 
+        // A %00 in the address decodes to a NUL byte, which realpath() throws
+        // on: one such image in a post failed the whole export.
+        if (str_contains($path, "\0")) {
+            return null;
+        }
+
         $public = realpath($this->paths->public);
         $file = realpath($this->paths->public . $path);
 
