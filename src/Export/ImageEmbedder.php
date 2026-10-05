@@ -35,6 +35,11 @@ class ImageEmbedder
     /** Above this many pixels a PNG is flattened to JPEG (see prepare()). */
     private const FLATTEN_PIXELS = 400_000;
 
+    /** @var array<string, bool> address => is a fof/upload file */
+    private array $uploadMemo = [];
+
+    private ?bool $hasUploadsTable = null;
+
     public function __construct(
         private Paths $paths,
         private Config $config,
@@ -98,7 +103,9 @@ class ImageEmbedder
             }
         }
 
-        $uploads = $this->knownUploads($srcs);
+        // Emoji too: embed() asks about every <img>, and an address looked up
+        // here is one it never has to query for.
+        $uploads = $this->knownUploads(array_merge($srcs, $emoji));
         $wanted = [];
 
         foreach ($srcs as $src) {
@@ -160,14 +167,37 @@ class ImageEmbedder
     {
         $srcs = array_values(array_unique(array_filter($srcs, fn ($s) => preg_match('#^https?://#i', $s))));
 
-        if ($srcs === [] || ! $this->db->getSchemaBuilder()->hasTable('fof_upload_files')) {
-            return [];
+        /*
+         * 🚨 Memoised per export. embed() runs once per POST, so asking the
+         * schema and the table every time cost two queries per post with an
+         * image — up to a thousand on a long thread. prefetch() has already
+         * looked up every address the document holds, so the per-post calls
+         * are answered from here without touching the database.
+         */
+        $unknown = array_values(array_filter($srcs, fn ($s) => ! array_key_exists($s, $this->uploadMemo)));
+
+        if ($unknown !== [] && $this->hasUploadsTable()) {
+            foreach (array_chunk($unknown, 500) as $chunk) {
+                $found = array_fill_keys($this->db->table('fof_upload_files')->whereIn('url', $chunk)->pluck('url')->all(), true);
+                foreach ($chunk as $src) {
+                    $this->uploadMemo[$src] = isset($found[$src]);
+                }
+            }
         }
 
-        return array_fill_keys(
-            $this->db->table('fof_upload_files')->whereIn('url', $srcs)->pluck('url')->all(),
-            true
-        );
+        $known = [];
+        foreach ($srcs as $src) {
+            if ($this->uploadMemo[$src] ?? false) {
+                $known[$src] = true;
+            }
+        }
+
+        return $known;
+    }
+
+    private function hasUploadsTable(): bool
+    {
+        return $this->hasUploadsTable ??= $this->db->getSchemaBuilder()->hasTable('fof_upload_files');
     }
 
     /**
