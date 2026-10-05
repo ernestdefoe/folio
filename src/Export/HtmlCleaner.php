@@ -70,6 +70,14 @@ class HtmlCleaner
                 if (str_starts_with($name, 'on') || in_array($name, ['srcset', 'loading', 'draggable', 'contenteditable'], true)) {
                     $el->removeAttribute($attr->name);
                 }
+
+                // A style that loads something (url(), image-set(), @import) would
+                // be fetched by the PDF engine from the server. A backslash is a
+                // CSS escape that could spell one in disguise. Colours and sizes
+                // never need either.
+                if ($name === 'style' && preg_match('/url\s*\(|image(-set)?\s*\(|@import|\\\\/i', $attr->value)) {
+                    $el->removeAttribute($attr->name);
+                }
             }
 
             if ($el->tagName === 'a') {
