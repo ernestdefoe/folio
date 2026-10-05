@@ -152,7 +152,18 @@ class SafeFetcher
     /** The host's first address, if every address it has is a public one. */
     private function publicAddress(string $host): ?string
     {
-        $host = trim($host, '[]');
+        $host = rtrim(trim($host, '[]'), '.');
+
+        /*
+         * 🚨 A host whose last label is a number IS an address, in whatever
+         * form: 0177.0.0.1 (octal), 0x7f.1 (hex), 2130706433 or 127.1 all
+         * mean 127.0.0.1 to cURL and to the resolver. Only the plain
+         * dotted-quad is reasoned about; every other spelling is refused.
+         */
+        $last = substr(strrchr('.' . $host, '.'), 1);
+        if (preg_match('/^(0x[0-9a-f]*|[0-9]+)$/i', $last) && ! filter_var($host, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)) {
+            return null;
+        }
 
         $ips = filter_var($host, FILTER_VALIDATE_IP) ? [$host] : (gethostbynamel($host) ?: []);
 
@@ -161,7 +172,7 @@ class SafeFetcher
         }
 
         foreach ($ips as $ip) {
-            if (! filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE)) {
+            if (! filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE | FILTER_FLAG_GLOBAL_RANGE)) {
                 return null;
             }
         }
