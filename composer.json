@@ -13,6 +13,7 @@
     "license": "MIT",
     "homepage": "https://github.com/ernestdefoe/folio",
     "support": {
+        "forum": "https://discuss.flarum.org/d/39994-folio",
         "issues": "https://github.com/ernestdefoe/folio/issues",
         "source": "https://github.com/ernestdefoe/folio"
     },
