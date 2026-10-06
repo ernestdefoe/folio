@@ -88,6 +88,10 @@ composer update ernestdefoe/folio
 php flarum cache:clear
 ```
 
+## Discuss
+
+Questions, ideas and release notes: [Folio on discuss.flarum.org](https://discuss.flarum.org/d/39994-folio).
+
 ## Licence
 
 MIT. Folio uses [Dompdf](https://github.com/dompdf/dompdf) (LGPL-2.1), [PHPWord](https://github.com/PHPOffice/PHPWord) (LGPL-3.0) and [HTML To Markdown](https://github.com/thephpleague/html-to-markdown) (MIT), installed as their own packages.
