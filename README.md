@@ -88,9 +88,11 @@ composer update ernestdefoe/folio
 php flarum cache:clear
 ```
 
-## Discuss
+## Support
 
-Questions, ideas and release notes: [Folio on discuss.flarum.org](https://discuss.flarum.org/d/39994-folio).
+- **Support forum:** [Folio on ernestdefoe.online](https://ernestdefoe.online/d/117)
+- **Flarum community:** [Folio on discuss.flarum.org](https://discuss.flarum.org/d/39994-folio)
+- **Bug reports:** [GitHub issues](https://github.com/ernestdefoe/folio/issues)
 
 ## Licence
 
