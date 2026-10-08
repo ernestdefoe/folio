@@ -19,22 +19,45 @@ class MarkdownFormat implements Format
     {
     }
 
-    public function key(): string { return 'markdown'; }
-    public function label(): string { return (string) $this->translator->trans('ernestdefoe-folio.lib.format_markdown'); }
-    public function icon(): string { return 'fab fa-markdown'; }
-    public function supportsAvatars(): bool { return false; }
-    public function extension(): string { return 'md'; }
-    public function mimeType(): string { return 'text/markdown; charset=utf-8'; }
+    public function key(): string
+    {
+        return 'markdown';
+    }
+
+    public function label(): string
+    {
+        return (string) $this->translator->trans('ernestdefoe-folio.lib.format_markdown');
+    }
+
+    public function icon(): string
+    {
+        return 'fab fa-markdown';
+    }
+
+    public function supportsAvatars(): bool
+    {
+        return false;
+    }
+
+    public function extension(): string
+    {
+        return 'md';
+    }
+
+    public function mimeType(): string
+    {
+        return 'text/markdown; charset=utf-8';
+    }
 
     public function render(Document $doc): string
     {
-        $t = fn (string $key, array $params = []) => (string) $this->translator->trans('ernestdefoe-folio.lib.' . $key, $params);
+        $t = fn (string $key, array $params = []) => (string) $this->translator->trans('ernestdefoe-folio.lib.'.$key, $params);
         $o = $doc->options;
 
         $converter = new HtmlConverter([
-            'strip_tags'   => true,
+            'strip_tags' => true,
             'header_style' => 'atx',
-            'hard_break'   => true,
+            'hard_break' => true,
             'remove_nodes' => 'script style',
         ]);
         // Neither is on by default: tables (Scribe makes them) and strikethrough
@@ -47,22 +70,22 @@ class MarkdownFormat implements Format
             $out[] = $doc->fill($doc->header);
         }
 
-        $out[] = '# ' . $this->line($doc->title);
-        $out[] = '_' . $this->line($doc->forumTitle) . ' · <' . $doc->url . '> · '
-            . $t('exported_on', ['date' => $doc->exportedAt->locale($doc->locale)->isoFormat('LL')]) . '_';
+        $out[] = '# '.$this->line($doc->title);
+        $out[] = '_'.$this->line($doc->forumTitle).' · <'.$doc->url.'> · '
+            .$t('exported_on', ['date' => $doc->exportedAt->locale($doc->locale)->isoFormat('LL')]).'_';
 
         foreach ($doc->posts as $post) {
             $out[] = '---';
 
             $byline = [];
             if ($o->authors) {
-                $byline[] = '**' . $this->line($post->author) . '**';
+                $byline[] = '**'.$this->line($post->author).'**';
             }
             if ($o->dates && $post->createdAt) {
-                $byline[] = $post->createdAt->locale($doc->locale)->isoFormat('LLL') . ($post->editedAt ? ' (' . $t('edited') . ')' : '');
+                $byline[] = $post->createdAt->locale($doc->locale)->isoFormat('LLL').($post->editedAt ? ' ('.$t('edited').')' : '');
             }
             if ($byline) {
-                $out[] = implode(' · ', $byline) . ' · #' . $post->number;
+                $out[] = implode(' · ', $byline).' · #'.$post->number;
             }
 
             $out[] = $this->unescape(trim($converter->convert($this->emojiAsText($post->html))));
@@ -70,7 +93,7 @@ class MarkdownFormat implements Format
 
         if ($doc->omitted > 0) {
             $out[] = '---';
-            $out[] = '_' . $t('omitted', ['count' => $doc->omitted]) . '_';
+            $out[] = '_'.$t('omitted', ['count' => $doc->omitted]).'_';
         }
 
         if (trim($doc->footer) !== '') {
@@ -78,7 +101,7 @@ class MarkdownFormat implements Format
             $out[] = $doc->fill($doc->footer);
         }
 
-        return implode("\n\n", $out) . "\n";
+        return implode("\n\n", $out)."\n";
     }
 
     /**
@@ -107,7 +130,7 @@ class MarkdownFormat implements Format
         $dom = Html::parse($html);
 
         foreach (Html::all($dom, 'img') as $img) {
-            if (str_contains(' ' . $img->getAttribute('class') . ' ', ' emoji ') && $img->getAttribute('alt') !== '') {
+            if (str_contains(' '.$img->getAttribute('class').' ', ' emoji ') && $img->getAttribute('alt') !== '') {
                 $img->parentNode?->replaceChild($dom->createTextNode($img->getAttribute('alt')), $img);
             }
         }

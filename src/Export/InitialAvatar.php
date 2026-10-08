@@ -21,7 +21,7 @@ final class InitialAvatar
     public static function dataUri(string $name, string $hex): ?string
     {
         $letter = mb_strtoupper(mb_substr(trim($name) !== '' ? trim($name) : '?', 0, 1));
-        $key = $letter . $hex;
+        $key = $letter.$hex;
 
         if (array_key_exists($key, self::$memo)) {
             return self::$memo[$key];
@@ -70,17 +70,17 @@ final class InitialAvatar
         ob_start();
         imagepng($small);
 
-        return 'data:image/png;base64,' . base64_encode((string) ob_get_clean());
+        return 'data:image/png;base64,'.base64_encode((string) ob_get_clean());
     }
 
     /** The bold face dompdf ships with: present wherever Folio is installed. */
     private static function font(): ?string
     {
-        $dir = dirname((new \ReflectionClass(\Dompdf\Dompdf::class))->getFileName(), 2) . '/lib/fonts/';
+        $dir = dirname((new \ReflectionClass(\Dompdf\Dompdf::class))->getFileName(), 2).'/lib/fonts/';
 
         foreach (['DejaVuSans-Bold.ttf', 'DejaVuSans.ttf'] as $file) {
-            if (is_file($dir . $file)) {
-                return $dir . $file;
+            if (is_file($dir.$file)) {
+                return $dir.$file;
             }
         }
 

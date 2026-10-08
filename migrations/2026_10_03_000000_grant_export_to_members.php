@@ -17,7 +17,7 @@ return [
 
         if (! $exists) {
             $db->table('group_permission')->insert([
-                'group_id'   => 3,
+                'group_id' => 3,
                 'permission' => 'discussion.folioExport',
             ]);
         }

@@ -20,16 +20,39 @@ class PdfFormat implements Format
     ) {
     }
 
-    public function key(): string { return 'pdf'; }
-    public function label(): string { return (string) $this->translator->trans('ernestdefoe-folio.lib.format_pdf'); }
-    public function icon(): string { return 'fas fa-file-pdf'; }
-    public function supportsAvatars(): bool { return true; }
-    public function extension(): string { return 'pdf'; }
-    public function mimeType(): string { return 'application/pdf'; }
+    public function key(): string
+    {
+        return 'pdf';
+    }
+
+    public function label(): string
+    {
+        return (string) $this->translator->trans('ernestdefoe-folio.lib.format_pdf');
+    }
+
+    public function icon(): string
+    {
+        return 'fas fa-file-pdf';
+    }
+
+    public function supportsAvatars(): bool
+    {
+        return true;
+    }
+
+    public function extension(): string
+    {
+        return 'pdf';
+    }
+
+    public function mimeType(): string
+    {
+        return 'application/pdf';
+    }
 
     public function render(Document $document): string
     {
-        $work = $this->paths->storage . '/tmp/folio';
+        $work = $this->paths->storage.'/tmp/folio';
         if (! is_dir($work)) {
             @mkdir($work, 0775, true);
         }
@@ -81,24 +104,24 @@ class PdfFormat implements Format
     private function withMpdf(Document $document, string $work): string
     {
         $mpdf = new \Mpdf\Mpdf([
-            'mode'             => 'utf-8',
-            'format'           => $document->paper === 'letter' ? 'Letter' : 'A4',
-            'tempDir'          => $work,
-            'default_font'     => 'dejavusans',
+            'mode' => 'utf-8',
+            'format' => $document->paper === 'letter' ? 'Letter' : 'A4',
+            'tempDir' => $work,
+            'default_font' => 'dejavusans',
             'autoScriptToLang' => true,
-            'autoLangToFont'   => true,
-            'margin_top'       => 22,
-            'margin_bottom'    => 20,
-            'margin_left'      => 18,
-            'margin_right'     => 18,
-            'margin_footer'    => 8,
+            'autoLangToFont' => true,
+            'margin_top' => 22,
+            'margin_bottom' => 20,
+            'margin_left' => 18,
+            'margin_right' => 18,
+            'margin_footer' => 8,
         ]);
 
         // Every image is already embedded; nothing should be fetched from here.
         $mpdf->curlTimeout = 1;
 
         $label = (string) $this->translator->trans('ernestdefoe-folio.lib.page_of', ['page' => '{PAGENO}', 'pages' => '{nbpg}']);
-        $mpdf->SetHTMLFooter('<div style="text-align: center; font-size: 8pt; color: #8c949e;">' . htmlspecialchars($label, ENT_QUOTES, 'UTF-8') . '</div>');
+        $mpdf->SetHTMLFooter('<div style="text-align: center; font-size: 8pt; color: #8c949e;">'.htmlspecialchars($label, ENT_QUOTES, 'UTF-8').'</div>');
         $mpdf->SetTitle($document->title);
         /*
          * 🚨 mPDF reads "page-break-after: avoid" on the byline table as a

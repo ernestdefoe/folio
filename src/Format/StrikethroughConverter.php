@@ -12,7 +12,7 @@ class StrikethroughConverter implements ConverterInterface
     {
         $value = $element->getValue();
 
-        return trim($value) === '' ? $value : '~~' . $value . '~~';
+        return trim($value) === '' ? $value : '~~'.$value.'~~';
     }
 
     public function getSupportedTags(): array

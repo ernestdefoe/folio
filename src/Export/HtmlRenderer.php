@@ -20,7 +20,7 @@ class HtmlRenderer
     public function render(Document $doc): string
     {
         $e = fn (string $s) => htmlspecialchars($s, ENT_QUOTES | ENT_HTML5, 'UTF-8');
-        $t = fn (string $key, array $params = []) => (string) $this->translator->trans('ernestdefoe-folio.lib.' . $key, $params);
+        $t = fn (string $key, array $params = []) => (string) $this->translator->trans('ernestdefoe-folio.lib.'.$key, $params);
         $missing = $t('image_unavailable');
         $o = $doc->options;
 
@@ -37,47 +37,47 @@ class HtmlRenderer
                 if ($o->avatars && $o->authors) {
                     $src = ($post->avatarUrl ? $this->images->dataFor($post->avatarUrl, false, true) : null)
                         ?? InitialAvatar::dataUri($post->author, $doc->primaryColor);
-                    $avatar = '<td class="folio-avatar">' . ($src ? '<img src="' . $e($src) . '" alt="" style="width: 26pt; height: 26pt;">' : '') . '</td>';
+                    $avatar = '<td class="folio-avatar">'.($src ? '<img src="'.$e($src).'" alt="" style="width: 26pt; height: 26pt;">' : '').'</td>';
                 }
 
                 $date = '';
                 if ($o->dates && $post->createdAt) {
-                    $date = '<span class="folio-date">' . $e($post->createdAt->locale($doc->locale)->isoFormat('LLL')) . '</span>';
+                    $date = '<span class="folio-date">'.$e($post->createdAt->locale($doc->locale)->isoFormat('LLL')).'</span>';
                     if ($post->editedAt) {
-                        $date .= ' <span class="folio-edited">' . $e($t('edited')) . '</span>';
+                        $date .= ' <span class="folio-edited">'.$e($t('edited')).'</span>';
                     }
                 }
 
-                $name = $o->authors ? '<strong class="folio-author">' . $e($post->author) . '</strong>' : '';
+                $name = $o->authors ? '<strong class="folio-author">'.$e($post->author).'</strong>' : '';
                 $sep = $name !== '' && $date !== '' ? '<br>' : '';
 
-                $byline = '<table class="folio-byline"><tr>' . $avatar
-                    . '<td>' . $name . $sep . $date . '</td>'
-                    . '<td class="folio-number">#' . $post->number . '</td></tr></table>';
+                $byline = '<table class="folio-byline"><tr>'.$avatar
+                    .'<td>'.$name.$sep.$date.'</td>'
+                    .'<td class="folio-number">#'.$post->number.'</td></tr></table>';
             }
 
-            $posts .= '<div class="folio-post">' . $byline
-                . '<div class="folio-body">' . $this->images->embed($bodies[$i], $missing) . '</div></div>';
+            $posts .= '<div class="folio-post">'.$byline
+                .'<div class="folio-body">'.$this->images->embed($bodies[$i], $missing).'</div></div>';
         }
 
         $omitted = $doc->omitted > 0
-            ? '<p class="folio-omitted">' . $e($t('omitted', ['count' => $doc->omitted])) . '</p>'
+            ? '<p class="folio-omitted">'.$e($t('omitted', ['count' => $doc->omitted])).'</p>'
             : '';
 
-        $header = trim($doc->header) !== '' ? '<p class="folio-custom-header">' . nl2br($e($doc->fill($doc->header))) . '</p>' : '';
-        $footer = trim($doc->footer) !== '' ? '<p class="folio-custom-footer">' . nl2br($e($doc->fill($doc->footer))) . '</p>' : '';
+        $header = trim($doc->header) !== '' ? '<p class="folio-custom-header">'.nl2br($e($doc->fill($doc->header))).'</p>' : '';
+        $footer = trim($doc->footer) !== '' ? '<p class="folio-custom-footer">'.nl2br($e($doc->fill($doc->footer))).'</p>' : '';
 
-        $meta = $e($doc->forumTitle) . ' &middot; <a href="' . $e($doc->url) . '">' . $e($doc->url) . '</a><br>'
-            . $e($t('exported_on', ['date' => $doc->exportedAt->locale($doc->locale)->isoFormat('LL')]));
+        $meta = $e($doc->forumTitle).' &middot; <a href="'.$e($doc->url).'">'.$e($doc->url).'</a><br>'
+            .$e($t('exported_on', ['date' => $doc->exportedAt->locale($doc->locale)->isoFormat('LL')]));
 
-        return '<!DOCTYPE html><html lang="' . $e($doc->locale) . '"><head><meta charset="utf-8">'
-            . '<title>' . $e($doc->title) . '</title>'
-            . '<style>' . $this->css($doc) . '</style></head><body>'
-            . $header
-            . '<h1 class="folio-title">' . $e($doc->title) . '</h1>'
-            . '<p class="folio-meta">' . $meta . '</p>'
-            . $posts . $omitted . $footer
-            . '</body></html>';
+        return '<!DOCTYPE html><html lang="'.$e($doc->locale).'"><head><meta charset="utf-8">'
+            .'<title>'.$e($doc->title).'</title>'
+            .'<style>'.$this->css($doc).'</style></head><body>'
+            .$header
+            .'<h1 class="folio-title">'.$e($doc->title).'</h1>'
+            .'<p class="folio-meta">'.$meta.'</p>'
+            .$posts.$omitted.$footer
+            .'</body></html>';
     }
 
     private function css(Document $doc): string

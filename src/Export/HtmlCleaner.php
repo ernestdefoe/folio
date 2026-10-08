@@ -57,7 +57,7 @@ class HtmlCleaner
         $label = (string) $this->translator->trans('ernestdefoe-folio.lib.spoiler');
         foreach (iterator_to_array($xpath->query('.//*[contains(concat(" ", normalize-space(@class), " "), " spoiler ")]', $root)) as $spoiler) {
             /** @var \DOMElement $spoiler */
-            $tag = $dom->createElement('em', $label . ' ');
+            $tag = $dom->createElement('em', $label.' ');
             $tag->setAttribute('class', 'folio-spoiler-label');
             $spoiler->insertBefore($tag, $spoiler->firstChild);
         }
@@ -117,15 +117,15 @@ class HtmlCleaner
         }
 
         if (str_starts_with($url, '//')) {
-            return (parse_url($base, PHP_URL_SCHEME) ?: 'https') . ':' . $url;
+            return (parse_url($base, PHP_URL_SCHEME) ?: 'https').':'.$url;
         }
 
         if (str_starts_with($url, '/')) {
             $origin = preg_replace('#^(https?://[^/]+).*$#i', '$1', $base);
 
-            return $origin . $url;
+            return $origin.$url;
         }
 
-        return $base . '/' . $url;
+        return $base.'/'.$url;
     }
 }

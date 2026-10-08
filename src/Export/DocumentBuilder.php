@@ -82,7 +82,7 @@ class DocumentBuilder
 
         return new Document(
             title: (string) $discussion->title,
-            url: $this->url->to('forum')->route('discussion', ['id' => $discussion->id . ($discussion->slug ? '-' . $discussion->slug : '')]),
+            url: $this->url->to('forum')->route('discussion', ['id' => $discussion->id.($discussion->slug ? '-'.$discussion->slug : '')]),
             forumTitle: (string) $this->settings->get('forum_title'),
             forumUrl: $base,
             primaryColor: $this->color((string) $this->settings->get('theme_primary_color')),

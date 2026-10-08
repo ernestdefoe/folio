@@ -33,8 +33,8 @@ class Document
         return strtr($text, [
             '{forum}' => $this->forumTitle,
             '{title}' => $this->title,
-            '{date}'  => $this->exportedAt->isoFormat('LL'),
-            '{url}'   => $this->url,
+            '{date}' => $this->exportedAt->isoFormat('LL'),
+            '{url}' => $this->url,
         ]);
     }
 }

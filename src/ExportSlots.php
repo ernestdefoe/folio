@@ -40,16 +40,16 @@ class ExportSlots
         }
 
         $token = bin2hex(random_bytes(8));
-        $mine = 'folio.running.' . ($actor->isGuest()
-            ? 'ip:' . sha1((string) ($request->getAttribute('ipAddress') ?? ''))
-            : 'user:' . $actor->id);
+        $mine = 'folio.running.'.($actor->isGuest()
+            ? 'ip:'.sha1((string) ($request->getAttribute('ipAddress') ?? ''))
+            : 'user:'.$actor->id);
 
         if (! $this->cache->add($mine, $token, self::TTL)) {
             return 'self';
         }
 
         for ($i = 0; $i < self::PER_FORUM; $i++) {
-            $slot = 'folio.running.slot.' . $i;
+            $slot = 'folio.running.slot.'.$i;
 
             if ($this->cache->add($slot, $token, self::TTL)) {
                 return fn () => $this->release([$mine, $slot], $token);

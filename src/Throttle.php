@@ -32,10 +32,10 @@ class Throttle
         }
 
         $who = $actor->isGuest()
-            ? 'ip:' . sha1((string) ($request->getAttribute('ipAddress') ?? ''))
-            : 'user:' . $actor->id;
+            ? 'ip:'.sha1((string) ($request->getAttribute('ipAddress') ?? ''))
+            : 'user:'.$actor->id;
 
         // add() is atomic: true for the first request in the window, false after.
-        return $this->cache->add('folio.throttle.' . $who, 1, self::SECONDS) ? null : true;
+        return $this->cache->add('folio.throttle.'.$who, 1, self::SECONDS) ? null : true;
     }
 }

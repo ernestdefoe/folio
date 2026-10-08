@@ -12,7 +12,7 @@ final class Html
         // 🚨 Without the charset hint libxml reads the bytes as Latin-1 and
         // every non-ASCII character in a post comes out as mojibake.
         @$dom->loadHTML(
-            '<!DOCTYPE html><html><head><meta charset="utf-8"></head><body><div id="folio-root">' . $fragment . '</div></body></html>',
+            '<!DOCTYPE html><html><head><meta charset="utf-8"></head><body><div id="folio-root">'.$fragment.'</div></body></html>',
             LIBXML_NONET | LIBXML_NOERROR | LIBXML_NOWARNING
         );
 

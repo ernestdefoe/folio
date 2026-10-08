@@ -57,7 +57,7 @@ class ImageEmbedder
 
         foreach ($imgs as $img) {
             $src = $img->getAttribute('src');
-            $isEmoji = str_contains(' ' . $img->getAttribute('class') . ' ', ' emoji ');
+            $isEmoji = str_contains(' '.$img->getAttribute('class').' ', ' emoji ');
             $data = $this->dataFor($src, $isEmoji, isset($uploads[$src]));
 
             if ($data !== null) {
@@ -77,7 +77,7 @@ class ImageEmbedder
             if (preg_match('#^https?://#i', $src)) {
                 $a->setAttribute('href', $src);
             }
-            $a->appendChild($dom->createTextNode('[' . ($alt !== '' ? $alt : $missingLabel) . ']'));
+            $a->appendChild($dom->createTextNode('['.($alt !== '' ? $alt : $missingLabel).']'));
             $img->parentNode?->replaceChild($a, $img);
         }
 
@@ -99,7 +99,7 @@ class ImageEmbedder
         foreach ($bodies as $html) {
             foreach (Html::all(Html::parse($html), 'img') as $img) {
                 $src = $img->getAttribute('src');
-                str_contains(' ' . $img->getAttribute('class') . ' ', ' emoji ') ? $emoji[] = $src : $srcs[] = $src;
+                str_contains(' '.$img->getAttribute('class').' ', ' emoji ') ? $emoji[] = $src : $srcs[] = $src;
             }
         }
 
@@ -218,7 +218,7 @@ class ImageEmbedder
 
         $path = rawurldecode($url['path'] ?? '');
         $basePath = rtrim($forum['path'] ?? '', '/');
-        if ($basePath !== '' && str_starts_with($path, $basePath . '/')) {
+        if ($basePath !== '' && str_starts_with($path, $basePath.'/')) {
             $path = substr($path, strlen($basePath));
         }
 
@@ -229,9 +229,9 @@ class ImageEmbedder
         }
 
         $public = realpath($this->paths->public);
-        $file = realpath($this->paths->public . $path);
+        $file = realpath($this->paths->public.$path);
 
-        if ($public === false || $file === false || ! str_starts_with($file, $public . DIRECTORY_SEPARATOR) || ! is_file($file)) {
+        if ($public === false || $file === false || ! str_starts_with($file, $public.DIRECTORY_SEPARATOR) || ! is_file($file)) {
             return null;
         }
 
@@ -296,7 +296,7 @@ class ImageEmbedder
             ob_start();
             imagejpeg($image, null, 90);
 
-            return 'data:image/jpeg;base64,' . base64_encode((string) ob_get_clean());
+            return 'data:image/jpeg;base64,'.base64_encode((string) ob_get_clean());
         }
 
         if (! $isWebp && ! $resized) {
@@ -307,6 +307,6 @@ class ImageEmbedder
         ob_start();
         imagepng($image, null, 6);
 
-        return 'data:image/png;base64,' . base64_encode((string) ob_get_clean());
+        return 'data:image/png;base64,'.base64_encode((string) ob_get_clean());
     }
 }

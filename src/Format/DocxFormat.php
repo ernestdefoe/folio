@@ -28,16 +28,39 @@ class DocxFormat implements Format
     ) {
     }
 
-    public function key(): string { return 'docx'; }
-    public function label(): string { return (string) $this->translator->trans('ernestdefoe-folio.lib.format_docx'); }
-    public function icon(): string { return 'fas fa-file-word'; }
-    public function supportsAvatars(): bool { return true; }
-    public function extension(): string { return 'docx'; }
-    public function mimeType(): string { return 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'; }
+    public function key(): string
+    {
+        return 'docx';
+    }
+
+    public function label(): string
+    {
+        return (string) $this->translator->trans('ernestdefoe-folio.lib.format_docx');
+    }
+
+    public function icon(): string
+    {
+        return 'fas fa-file-word';
+    }
+
+    public function supportsAvatars(): bool
+    {
+        return true;
+    }
+
+    public function extension(): string
+    {
+        return 'docx';
+    }
+
+    public function mimeType(): string
+    {
+        return 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+    }
 
     public function render(Document $doc): string
     {
-        $t = fn (string $key, array $params = []) => (string) $this->translator->trans('ernestdefoe-folio.lib.' . $key, $params);
+        $t = fn (string $key, array $params = []) => (string) $this->translator->trans('ernestdefoe-folio.lib.'.$key, $params);
         $o = $doc->options;
         $color = ltrim($doc->primaryColor, '#');
         $color = strlen($color) === 3 ? preg_replace('/(.)/', '$1$1', $color) : $color;
@@ -74,7 +97,7 @@ class DocxFormat implements Format
         $section->addTitle($doc->title, 1);
         $grey = ['size' => 8.5, 'color' => '6B7280'];
         $meta = $section->addTextRun(['spaceAfter' => 0]);
-        $meta->addText($doc->forumTitle . ' · ', $grey);
+        $meta->addText($doc->forumTitle.' · ', $grey);
         $meta->addLink($doc->url, $doc->url, ['size' => 8.5, 'color' => $color]);
         $section->addText(
             $t('exported_on', ['date' => $doc->exportedAt->locale($doc->locale)->isoFormat('LL')]),
@@ -109,11 +132,11 @@ class DocxFormat implements Format
             }
             if ($o->dates && $post->createdAt) {
                 $byline->addText(
-                    ($o->authors ? '   ' : '') . $post->createdAt->locale($doc->locale)->isoFormat('LLL') . ($post->editedAt ? ' · ' . $t('edited') : ''),
+                    ($o->authors ? '   ' : '').$post->createdAt->locale($doc->locale)->isoFormat('LLL').($post->editedAt ? ' · '.$t('edited') : ''),
                     ['size' => 9, 'color' => '6B7280']
                 );
             }
-            $byline->addText('   #' . $post->number, ['size' => 9, 'color' => '9CA3AF']);
+            $byline->addText('   #'.$post->number, ['size' => 9, 'color' => '9CA3AF']);
 
             $body = $this->forWord($this->images->embed($post->html, $missing));
             $this->addHtml($section, $body, $post->html);
@@ -123,7 +146,8 @@ class DocxFormat implements Format
             $section->addText($t('omitted', ['count' => $doc->omitted]), ['italic' => true, 'color' => '6B7280']);
         }
 
-        $file = tempnam($this->paths->storage . '/tmp', 'folio');
+        $file = tempnam($this->paths->storage.'/tmp', 'folio');
+
         try {
             IOFactory::createWriter($word, 'Word2007')->save($file);
 
@@ -144,7 +168,7 @@ class DocxFormat implements Format
         try {
             WordHtml::addHtml($section, $html, false, false);
         } catch (\Throwable $e) {
-            $this->log->info('[folio] a post fell back to plain text in a Word export: ' . $e->getMessage());
+            $this->log->info('[folio] a post fell back to plain text in a Word export: '.$e->getMessage());
 
             $text = trim(html_entity_decode(strip_tags(preg_replace('#<(br|/p|/li|/div|/h\d)[^>]*>#i', "\n", $fallback)), ENT_QUOTES | ENT_HTML5, 'UTF-8'));
             foreach (preg_split('/\n{2,}/', $text) as $para) {
@@ -163,7 +187,7 @@ class DocxFormat implements Format
         $dom = Html::parse($html);
 
         foreach (Html::all($dom, 'img') as $img) {
-            if (str_contains(' ' . $img->getAttribute('class') . ' ', ' emoji ')) {
+            if (str_contains(' '.$img->getAttribute('class').' ', ' emoji ')) {
                 $img->setAttribute('width', '16');
                 $img->setAttribute('height', '16');
                 continue;

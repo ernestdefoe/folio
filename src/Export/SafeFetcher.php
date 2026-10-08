@@ -118,16 +118,18 @@ class SafeFetcher
             return null;
         }
 
-        $body = new class { public string $value = ''; };
+        $body = new class {
+            public string $value = '';
+        };
         $ch = curl_init($url);
         curl_setopt_array($ch, [
-            CURLOPT_RESOLVE         => [$host . ':' . $port . ':' . $ip],
-            CURLOPT_FOLLOWLOCATION  => false,
-            CURLOPT_PROTOCOLS       => CURLPROTO_HTTP | CURLPROTO_HTTPS,
-            CURLOPT_CONNECTTIMEOUT  => 3,
-            CURLOPT_TIMEOUT         => 6,
-            CURLOPT_USERAGENT       => 'Folio (Flarum discussion export)',
-            CURLOPT_WRITEFUNCTION   => function ($ch, string $chunk) use ($body) {
+            CURLOPT_RESOLVE => [$host.':'.$port.':'.$ip],
+            CURLOPT_FOLLOWLOCATION => false,
+            CURLOPT_PROTOCOLS => CURLPROTO_HTTP | CURLPROTO_HTTPS,
+            CURLOPT_CONNECTTIMEOUT => 3,
+            CURLOPT_TIMEOUT => 6,
+            CURLOPT_USERAGENT => 'Folio (Flarum discussion export)',
+            CURLOPT_WRITEFUNCTION => function ($ch, string $chunk) use ($body) {
                 $body->value .= $chunk;
 
                 // Returning less than was given aborts the transfer.
@@ -160,7 +162,7 @@ class SafeFetcher
          * mean 127.0.0.1 to cURL and to the resolver. Only the plain
          * dotted-quad is reasoned about; every other spelling is refused.
          */
-        $last = substr(strrchr('.' . $host, '.'), 1);
+        $last = substr(strrchr('.'.$host, '.'), 1);
         if (preg_match('/^(0x[0-9a-f]*|[0-9]+)$/i', $last) && ! filter_var($host, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)) {
             return null;
         }
@@ -195,6 +197,6 @@ class SafeFetcher
             return null;
         }
 
-        return 'data:' . $mime . ';base64,' . base64_encode($bytes);
+        return 'data:'.$mime.';base64,'.base64_encode($bytes);
     }
 }

@@ -61,8 +61,8 @@ class ExportController implements RequestHandlerInterface
         if (is_string($release)) {
             return new JsonResponse(['errors' => [[
                 'status' => '429',
-                'code'   => 'too_many_requests',
-                'detail' => $this->translator->trans('ernestdefoe-folio.lib.errors.' . ($release === 'self' ? 'export_running' : 'exports_busy')),
+                'code' => 'too_many_requests',
+                'detail' => $this->translator->trans('ernestdefoe-folio.lib.errors.'.($release === 'self' ? 'export_running' : 'exports_busy')),
             ]]], 429, ['Retry-After' => '10']);
         }
 
@@ -85,7 +85,7 @@ class ExportController implements RequestHandlerInterface
         $body->write($bytes);
         $body->rewind();
 
-        $name = $this->filename($discussion) . '.' . $format->extension();
+        $name = $this->filename($discussion).'.'.$format->extension();
 
         return (new Response($body, 200))
             ->withHeader('Content-Type', $format->mimeType())
@@ -103,15 +103,15 @@ class ExportController implements RequestHandlerInterface
 
         $name = strtr($pattern, [
             '{title}' => (string) $discussion->title,
-            '{id}'    => (string) $discussion->id,
-            '{date}'  => date('Y-m-d'),
+            '{id}' => (string) $discussion->id,
+            '{date}' => date('Y-m-d'),
             '{forum}' => (string) $this->settings->get('forum_title'),
         ]);
 
         $name = preg_replace('/[\x00-\x1F\x7F\/\\\\:*?"<>|]+/u', '', $name);
         $name = trim(preg_replace('/\s+/u', ' ', $name), ' .');
 
-        return Str::limit($name !== '' ? $name : 'discussion-' . $discussion->id, 120, '');
+        return Str::limit($name !== '' ? $name : 'discussion-'.$discussion->id, 120, '');
     }
 
     /** RFC 6266: an ASCII name for old clients, the real one for everything else. */
@@ -120,6 +120,6 @@ class ExportController implements RequestHandlerInterface
         $ascii = preg_replace('/[^\x20-\x7E]/', '_', $name);
         $ascii = str_replace(['"', '\\'], '', $ascii);
 
-        return 'attachment; filename="' . $ascii . '"; filename*=UTF-8\'\'' . rawurlencode($name);
+        return 'attachment; filename="'.$ascii.'"; filename*=UTF-8\'\''.rawurlencode($name);
     }
 }

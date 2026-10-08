@@ -51,7 +51,7 @@ class FormatRegistry
             return false;
         }
 
-        $value = $this->settings->get('ernestdefoe-folio.format_' . $key);
+        $value = $this->settings->get('ernestdefoe-folio.format_'.$key);
 
         return $value === null || (bool) $value;
     }
@@ -69,9 +69,9 @@ class FormatRegistry
         foreach ($this->all() as $key => $format) {
             if ($this->enabled($key)) {
                 $out[] = [
-                    'key'     => $key,
-                    'label'   => $format->label(),
-                    'icon'    => $format->icon(),
+                    'key' => $key,
+                    'label' => $format->label(),
+                    'icon' => $format->icon(),
                     'avatars' => $format->supportsAvatars(),
                 ];
             }

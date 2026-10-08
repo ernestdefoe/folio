@@ -19,8 +19,8 @@ final class Emoji
     public const BASE = 'https://cdn.jsdelivr.net/gh/jdecked/twemoji@15.1.0/assets/72x72/';
 
     private const PATTERN = '/\p{Regional_Indicator}{2}'
-        . '|[#*0-9]\x{FE0F}?\x{20E3}'
-        . '|\p{Extended_Pictographic}(?:\x{FE0F}|\p{Emoji_Modifier})?(?:\x{200D}\p{Extended_Pictographic}(?:\x{FE0F}|\p{Emoji_Modifier})?)*/u';
+        .'|[#*0-9]\x{FE0F}?\x{20E3}'
+        .'|\p{Extended_Pictographic}(?:\x{FE0F}|\p{Emoji_Modifier})?(?:\x{200D}\p{Extended_Pictographic}(?:\x{FE0F}|\p{Emoji_Modifier})?)*/u';
 
     public static function toImages(string $html): string
     {
@@ -52,7 +52,7 @@ final class Emoji
                 $img = $dom->createElement('img');
                 $img->setAttribute('class', 'emoji');
                 $img->setAttribute('alt', $emoji);
-                $img->setAttribute('src', self::BASE . self::file($emoji) . '.png');
+                $img->setAttribute('src', self::BASE.self::file($emoji).'.png');
                 $fragment->appendChild($img);
                 $at = $offset + strlen($emoji);
                 $changed = true;
