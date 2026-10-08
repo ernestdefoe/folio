@@ -142,7 +142,10 @@ export default class ExportModal extends Modal {
     };
 
     try {
-      localStorage.setItem(PREFS_KEY, JSON.stringify({ format: this.format, scope: this.scope, authors: this.authors, dates: this.dates, avatars: this.avatars }));
+      localStorage.setItem(
+        PREFS_KEY,
+        JSON.stringify({ format: this.format, scope: this.scope, authors: this.authors, dates: this.dates, avatars: this.avatars })
+      );
     } catch (e) {
       // Private mode: the choice just isn't remembered.
     }

@@ -52,7 +52,13 @@ app.initializers.add('ernestdefoe-folio', () => {
     })
     .registerSetting({ setting: 'ernestdefoe-folio.header', type: 'text', label: t('header'), help: t('header_help', placeholders) })
     .registerSetting({ setting: 'ernestdefoe-folio.footer', type: 'text', label: t('footer'), help: t('footer_help') })
-    .registerSetting({ setting: 'ernestdefoe-folio.filename', type: 'text', label: t('filename'), help: t('filename_help', placeholders), placeholder: '{title}' })
+    .registerSetting({
+      setting: 'ernestdefoe-folio.filename',
+      type: 'text',
+      label: t('filename'),
+      help: t('filename_help', placeholders),
+      placeholder: '{title}',
+    })
     .registerSetting({ setting: 'ernestdefoe-folio.max_posts', type: 'number', min: 1, label: t('max_posts'), help: t('max_posts_help') })
     .registerSetting({ setting: 'ernestdefoe-folio.remote_images', type: 'boolean', label: t('remote_images'), help: t('remote_images_help') })
     .registerSetting({ setting: 'ernestdefoe-folio.custom_css', type: 'textarea', label: t('custom_css'), help: t('custom_css_help') });
