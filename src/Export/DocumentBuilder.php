@@ -72,7 +72,7 @@ class DocumentBuilder
 
             $exported[] = new ExportedPost(
                 number: (int) $post->number,
-                author: $user?->display_name ?? $deleted,
+                author: $user->display_name ?? $deleted,
                 avatarUrl: $user?->avatar_url,
                 createdAt: $post->created_at ? Carbon::parse($post->created_at) : null,
                 editedAt: $post->edited_at ? Carbon::parse($post->edited_at) : null,

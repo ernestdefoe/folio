@@ -62,8 +62,8 @@ class HtmlCleaner
             $spoiler->insertBefore($tag, $spoiler->firstChild);
         }
 
+        /** @var \DOMElement $el */
         foreach (iterator_to_array($root->getElementsByTagName('*')) as $el) {
-            /** @var \DOMElement $el */
             foreach (iterator_to_array($el->attributes) as $attr) {
                 $name = strtolower($attr->name);
 

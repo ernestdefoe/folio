@@ -8,6 +8,7 @@ use Ernestdefoe\Folio\Export\ImageEmbedder;
 use Ernestdefoe\Folio\Export\InitialAvatar;
 use Flarum\Foundation\Paths;
 use Flarum\Locale\TranslatorInterface;
+use PhpOffice\PhpWord\Element\Section;
 use PhpOffice\PhpWord\IOFactory;
 use PhpOffice\PhpWord\PhpWord;
 use PhpOffice\PhpWord\Settings;
@@ -138,7 +139,7 @@ class DocxFormat implements Format
      * through as its plain text instead — the words survive, the formatting
      * of that one post does not.
      */
-    private function addHtml($section, string $html, string $fallback): void
+    private function addHtml(Section $section, string $html, string $fallback): void
     {
         try {
             WordHtml::addHtml($section, $html, false, false);
