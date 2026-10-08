@@ -38,6 +38,11 @@
             "Ernestdefoe\\Folio\\": "src/"
         }
     },
+    "autoload-dev": {
+        "psr-4": {
+            "Ernestdefoe\\Folio\\Tests\\": "tests/"
+        }
+    },
     "extra": {
         "flarum-extension": {
             "title": "Folio",
@@ -49,7 +54,28 @@
             }
         }
     },
+    "require-dev": {
+        "flarum/phpstan": "^2.0",
+        "flarum/testing": "^2.0",
+        "mpdf/mpdf": "^8.3"
+    },
+    "scripts": {
+        "test": [
+            "@test:integration"
+        ],
+        "test:integration": "phpunit -c tests/phpunit.integration.xml",
+        "test:setup": "@php tests/integration/setup.php",
+        "analyse:phpstan": "phpstan analyse"
+    },
+    "scripts-descriptions": {
+        "test": "Runs all tests.",
+        "test:integration": "Runs all integration tests.",
+        "test:setup": "Sets up a database for use with integration tests. Execute this only once.",
+        "analyse:phpstan": "Run static analysis"
+    },
     "config": {
         "sort-packages": true
-    }
+    },
+    "minimum-stability": "beta",
+    "prefer-stable": true
 }
